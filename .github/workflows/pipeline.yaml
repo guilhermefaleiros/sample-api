@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: "guilhermefaleiros/k8s-configs"
-          token: ${{ secrets.NOME_DO_SEU_SEGREDO }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Kustomize
         uses: imranismail/setup-kustomize@v1
