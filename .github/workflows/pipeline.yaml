@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: "guilhermefaleiros/k8s-config"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN_GITHUB }}
 
       - name: Setup Kustomize
         uses: imranismail/setup-kustomize@v1
@@ -51,5 +51,5 @@ jobs:
       - name: Push
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN_GITHUB }}
           repository: guilhermefaleiros/k8s-config
