@@ -5,42 +5,51 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    name: Build
+  # build:
+  #   name: Build
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Build and push image to Dockerhub
+  #       uses: docker/build-push-action@v1.1.0
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #         repository: ${{ secrets.DOCKER_USERNAME }}/sample-api
+  #         tags: ${{ github.sha }}, latest
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout other repository
         uses: actions/checkout@v2
-
-      - name: Build and push image to Dockerhub
-        uses: docker/build-push-action@v1.1.0
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_USERNAME }}/sample-api
-          tags: ${{ github.sha }}, latest
+          repository: "guilhermefaleiros/k8s-configs"
+          token: ${{ secrets.NOME_DO_SEU_SEGREDO }}
 
-      # - name: Setup Kustomize
-      #   uses: imranismail/setup-kustomize@v1
-      #   with:
-      #     kustomize-version: "3.6.1"
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v1
+        with:
+          kustomize-version: "3.6.1"
 
-      # - name: Update Kubernetes resources
-      #   env:
-      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      #   run: |
-      #     cd k8s
-      #     kustomize edit set image goserver=$DOCKER_USERNAME/gitopsfc:$GITHUB_SHA
+      - name: Update Kubernetes resources
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd apps/sample
+          kustomize edit set image sample-api=$DOCKER_USERNAME/sample-api:$GITHUB_SHA
 
-      # - name: Commit
-      #   run: |
-      #     git config --local user.email "action@github.com"
-      #     git config --local user.name "GitHub Action"
-      #     git commit -am "Bump docker version"
+      - name: Commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -am "Bump docker version"
 
-      # - name: Push
-      #   uses: ad-m/github-push-action@master
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     repository: devfullcycle/gitopsfc
+      - name: Push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: guilhermefaleiros/k8s-config
