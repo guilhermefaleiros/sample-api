@@ -27,7 +27,7 @@ jobs:
       - name: Checkout other repository
         uses: actions/checkout@v2
         with:
-          repository: "guilhermefaleiros/k8s-configs"
+          repository: "guilhermefaleiros/k8s-config"
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Kustomize
